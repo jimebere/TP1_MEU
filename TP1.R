@@ -36,15 +36,21 @@ palermo_belgrano_sel1 <- palermo_belgrano %>%
 palermo_belgrano_sel2 <- palermo_belgrano_sel1 %>% 
   filter(tipo_obra %in% c("DEMOLICION", "PERMISO DE DEMOLICION"))
 
-#Como R reconoce las variables categóricas, usé la función Summary para mostrar la frecuencia de cada categoría.
-summary(palermo_belgrano_sel2)
+install.packages("plyr")
+library(plyr)
+count(palermo_belgrano_sel2, "tipo_obra")
 
-##### Creación de variables con mutate(): Recodificación en rangos
-palermo_belgrano_anios <- palermo_belgrano_sel2 %>% 
-  mutate(fecha = case_when(fecha < 2022-12-30~ "2022_o_menor",
-                                          fecha >= 2022-12-30~ "2023"))
+#Aqui, tal como lo indica el resultado obtenido, podemos observar que en los barrios de Palermo y Belgrano hubo, según estos registros, 17 demoliciones y 230 permisos de demolición.
 
-### "Radiografía de los datos
-install.packages("skimr")
-library(skimr)
-skimr::skim(palermo_belgrano_anios)
+
+##### Cuántos por año?
+library(lubridate)
+
+palermo_belgrano_anios <- palermo_belgrano_sel2 %>%
+  mutate(mes = month(fecha),
+         dia = day(fecha),
+         anio = year(fecha)) 
+count (palermo_belgrano_anios, "anio")
+
+#Por ultimo según el resultado arrojado, la mayoria de las demoliciones y permisos de deomilicion se dieron en el año 2022
+
